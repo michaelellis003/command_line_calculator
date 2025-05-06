@@ -1,3 +1,39 @@
+/**
+ * @file tokenizer.h
+ * @brief Header file for tokenizing mathematical expressions into tokens for parsing.
+ *
+ * This file defines the structures and functions necessary for tokenizing
+ * mathematical expressions into a sequence of tokens. These tokens are used
+ * in parsing algorithms such as the Shunting Yard algorithm to evaluate or
+ * transform expressions.
+ *
+ * Features:
+ * - Defines the `Token` struct to represent individual tokens in an expression.
+ * - Provides utility functions for determining operator precedence and associativity.
+ * - Includes a tokenizer function to convert a string expression into a vector of tokens.
+ *
+ * Token Types:
+ * - `NUMBER`: Represents numeric values.
+ * - `OPERATOR`: Represents mathematical operators such as `+`, `-`, `*`, `/`, `^`.
+ * - `LEFT_PAREN`: Represents the left parenthesis `(`.
+ * - `RIGHT_PAREN`: Represents the right parenthesis `)`.
+ * - `UNKNOWN`: Represents unrecognized or uninitialized tokens.
+ *
+ * Precedence Levels:
+ * - `PREC_ADD_SUB`: Precedence for addition and subtraction operators (`+`, `-`).
+ * - `PREC_MUL_DIV`: Precedence for multiplication and division operators (`*`, `/`).
+ * - `PREC_POWER`: Precedence for the power operator (`^`).
+ *
+ * Usage:
+ * - Use the `tokenizer` function to parse a mathematical expression into tokens.
+ * - Use utility functions like `getPrecedence` and `isOperatorLeftAssociative` to
+ *   assist in parsing and evaluating expressions.
+ *
+ * @author Michael Ellis
+ * @date 2023
+ */
+#pragma once
+
 #include <iostream>
 #include <vector>
 #include <string_view>
@@ -5,7 +41,6 @@
 const int PREC_ADD_SUB = 1;
 const int PREC_MUL_DIV = 2;
 const int PREC_POWER = 3;
-const int PREC_UNARY = 4; // Unary operators have higher precedence
 
 // Enum to represent the type of a token
 enum class TokenType {
@@ -47,6 +82,3 @@ bool isOperatorLeftAssociative(char op);
 
 
 std::vector<Token> tokenizer(const std::string_view expression);
-
-// Shunting-yard algorithm to convert infix string to postfix (RPN) vector of Tokens
-//void shuntingYard(const std::string_view expression);

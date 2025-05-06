@@ -1,3 +1,32 @@
+/**
+ * @file tokenizer.cpp
+ * @brief Implementation of a tokenizer for mathematical expressions.
+ *
+ * This file contains functions to tokenize a mathematical expression into
+ * a sequence of tokens. The tokenizer supports operators, parentheses, 
+ * and numeric values, including floating-point numbers. It also provides 
+ * utility functions to determine operator precedence and associativity.
+ *
+ * Functions:
+ * - getPrecedence(char op): Determines the precedence of a given operator.
+ * - isOperatorChar(char c): Checks if a character is a valid operator.
+ * - isBinaryOperatorLeftAssociative(char op): Determines if a binary operator 
+ *   is left-associative.
+ * - tokenizer(const std::string_view expression): Tokenizes a mathematical 
+ *   expression into a vector of tokens.
+ *
+ * Supported Features:
+ * - Operators: +, -, *, /, ^
+ * - Parentheses: ( and )
+ * - Numbers: Integers and floating-point values
+ *
+ * Notes:
+ * - Exponentiation (^) is treated as a right-associative operator.
+ * - Invalid characters in the expression are reported via standard error output.
+ *
+ * @author Michael Ellis
+ * @date 2023
+ */
 #include "tokenizer.h"
 
 // Function to determine operator precedence
