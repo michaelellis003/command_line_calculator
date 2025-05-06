@@ -1,9 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <string>
 #include <string_view>
-#include <queue>
-#include <stack>
 
 const int PREC_ADD_SUB = 1;
 const int PREC_MUL_DIV = 2;
@@ -49,7 +46,7 @@ bool isOperatorChar(char c);
 bool isOperatorLeftAssociative(char op);
 
 
-std::queue<Token> tokenizer(const std::string_view expression);
+std::vector<Token> tokenizer(const std::string_view expression);
 
 // Shunting-yard algorithm to convert infix string to postfix (RPN) vector of Tokens
 //void shuntingYard(const std::string_view expression);

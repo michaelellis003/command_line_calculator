@@ -46,6 +46,7 @@
         "bitset": "cpp",
         "memory": "cpp",
         "print": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "queue": "cpp"
     }
 }

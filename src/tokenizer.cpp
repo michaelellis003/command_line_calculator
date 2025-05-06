@@ -27,8 +27,8 @@ bool isBinaryOperatorLeftAssociative(char op) {
 }
 
 // Function to tokenize the input expression
-std::queue<Token> tokenizer(const std::string_view expression) {
-    std::queue<Token> tokens;
+std::vector<Token> tokenizer(const std::string_view expression) {
+    std::vector<Token> tokens;
 
     for (size_t i = 0; i < expression.length(); ++i) {
 
@@ -43,19 +43,19 @@ std::queue<Token> tokenizer(const std::string_view expression) {
                 getPrecedence(char_token),
                 isBinaryOperatorLeftAssociative(char_token)
             };
-            tokens.push(currToken);
+            tokens.push_back(currToken);
         } else if (char_token == '(') {
             Token currToken{
                 char_token, 
                 TokenType::LEFT_PAREN
             };
-            tokens.push(currToken);
+            tokens.push_back(currToken);
         } else if (char_token == ')') {
             Token currToken{
                 char_token, 
                 TokenType::RIGHT_PAREN
             };
-            tokens.push(currToken);
+            tokens.push_back(currToken);
         } else if (isdigit(char_token) || char_token == '.') {
             // Start building a number token
             std::string number_str;
@@ -75,7 +75,7 @@ std::queue<Token> tokenizer(const std::string_view expression) {
                 number_str, 
                 TokenType::NUMBER
             };
-            tokens.push(currToken);
+            tokens.push_back(currToken);
 
         } else {
             // Handle invalid characters
