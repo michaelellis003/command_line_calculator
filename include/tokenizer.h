@@ -51,25 +51,33 @@ enum class TokenType {
     UNKNOWN     // For errors or uninitialized
 };
 
+// Helper function to convert TokenType to its string representation
+std::string tokenTypeToString(TokenType type);
+
 // Struct to represent a token
 struct Token {
     std::string value;      // The string representation of the token (e.g., "3.14", "+")
-    TokenType type = TokenType::UNKNOWN;
-    int precedence = 0;
-    bool isLeftAssociative = true;
+    TokenType type;
+    int precedence;
+    bool isLeftAssociative;;
 
-    // Constructor for numbers
-    Token(std::string val, TokenType t) :
-        value(std::move(val)), type(t) {}
+    // Constructor for numbers with multiple digits
+    Token(std::string val_str, TokenType t)
+        : value(std::move(val_str)), type(t), precedence(0), isLeftAssociative(true) {}
 
-    // Constructor for operators/parentheses
-    Token(char opChar, TokenType t, int prec = 0, bool assoc = true) :
-        value(1, opChar), type(t), precedence(prec), isLeftAssociative(assoc) {}
+    // Constructor for numbers with single digits, paraentheses, or 
+    // non-operator/numerica characters
+    Token(char val_char, TokenType t)
+        : value(1, val_char), type(t), precedence(0), isLeftAssociative(true) {}
 
-    Token(std::string val, TokenType t, int prec, bool assoc) :
-        value(std::move(val)), type(t), precedence(prec), isLeftAssociative(assoc) {}
+    // Constructor for operators
+    Token(char val_char, TokenType t, int prec, bool is_left_assoc)
+        : value(1, val_char), type(t), precedence(prec), isLeftAssociative(is_left_assoc) {}
 
 };
+
+// Overload the << operator for Token
+std::ostream& operator<<(std::ostream& os, const Token& token);
 
 // Function to determine operator precedence
 int getPrecedence(char op);
@@ -78,7 +86,6 @@ int getPrecedence(char op);
 bool isOperatorChar(char c);
 
 // Function to determine if an operator character is left-associative
-bool isOperatorLeftAssociative(char op);
-
+bool isBinaryOperatorLeftAssociative(char op);
 
 std::vector<Token> tokenizer(const std::string_view expression);

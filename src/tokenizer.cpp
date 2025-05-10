@@ -29,6 +29,30 @@
  */
 #include "tokenizer.h"
 
+
+// Helper function to convert TokenType to its string representation (Definition)
+std::string tokenTypeToString(TokenType type) {
+    switch (type) {
+        case TokenType::NUMBER:       return "NUMBER";
+        case TokenType::OPERATOR:     return "OPERATOR";
+        case TokenType::LEFT_PAREN:   return "LEFT_PAREN";
+        case TokenType::RIGHT_PAREN:  return "RIGHT_PAREN";
+        case TokenType::UNKNOWN:      return "UNKNOWN";
+        default:                      return "INVALID_TYPE";
+    }
+}
+
+// Overload the << operator for Token (Definition)
+std::ostream& operator<<(std::ostream& os, const Token& token) {
+    os << "Token { "
+       << "Value: \"" << token.value << "\", "
+       << "Type: " << tokenTypeToString(token.type) << ", "
+       << "Precedence: " << token.precedence << ", "
+       << "IsLeftAssociative: " << (token.isLeftAssociative ? "true" : "false")
+       << " }";
+    return os;
+}
+
 // Function to determine operator precedence
 int getPrecedence(char op) {
     if (op == '+' || op == '-') return PREC_ADD_SUB;
@@ -66,25 +90,23 @@ std::vector<Token> tokenizer(const std::string_view expression) {
         if (isspace(char_token)) { // Skip whitespace
             continue; // If no number is being built, just skip whitespace
         } else if (isOperatorChar(char_token)) {
-            Token currToken{
-                char_token, 
-                TokenType::OPERATOR, 
-                getPrecedence(char_token),
-                isBinaryOperatorLeftAssociative(char_token)
-            };
-            tokens.push_back(currToken);
+            tokens.push_back(
+                Token(
+                    char_token, 
+                    TokenType::OPERATOR, 
+                    getPrecedence(char_token), 
+                    isBinaryOperatorLeftAssociative(char_token)
+                )
+            );
+
         } else if (char_token == '(') {
-            Token currToken{
-                char_token, 
-                TokenType::LEFT_PAREN
-            };
-            tokens.push_back(currToken);
+
+            tokens.push_back(Token(char_token, TokenType::LEFT_PAREN));
+
         } else if (char_token == ')') {
-            Token currToken{
-                char_token, 
-                TokenType::RIGHT_PAREN
-            };
-            tokens.push_back(currToken);
+
+            tokens.push_back(Token(char_token, TokenType::RIGHT_PAREN));
+
         } else if (isdigit(char_token) || char_token == '.') {
             // Start building a number token
             std::string number_str;
@@ -100,11 +122,8 @@ std::vector<Token> tokenizer(const std::string_view expression) {
                 i++;
             }
             i--; // Adjust index since the loop will increment it
-            Token currToken{
-                number_str, 
-                TokenType::NUMBER
-            };
-            tokens.push_back(currToken);
+
+            tokens.push_back(Token(number_str, TokenType::NUMBER));
 
         } else {
             // Handle invalid characters
