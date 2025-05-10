@@ -1,6 +1,6 @@
 #include "CLI11.h"
 #include "tokenizer.h"
-#include "parser.h"
+#include "calculator.h"
 #include <iostream>
 
 int main(int argc, char **argv) { // Standard main function
@@ -19,16 +19,9 @@ int main(int argc, char **argv) { // Standard main function
 
     // Use parsed value
     std::vector<Token> tokenized_exp = tokenizer(expression); // Call the tokenizer function with the expression
-    
-    // std::cout << "Queue contents (will empty the queue): \n";
-    // for (size_t i = 0; i < tokenized_exp.size(); ++i) {
-    //     std::cout << "Value: " << tokenized_exp[i].value << " ";
-    //     std::cout << "Precedence: " << tokenized_exp[i].precedence << "\n";
-    // }
-    // std::cout << std::endl;
 
-    shuntingYard(tokenized_exp); // Call the shunting yard algorithm with the tokenized expression
-    //std::cout << "Expression: " << expression << std::endl;
+    double answer = calculate(tokenized_exp); // Call the shunting yard algorithm with the tokenized expression
+    std::cout << expression << " = " << answer << std::endl;
 
     return 0;
 }

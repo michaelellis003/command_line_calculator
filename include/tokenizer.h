@@ -1,91 +1,67 @@
-/**
- * @file tokenizer.h
- * @brief Header file for tokenizing mathematical expressions into tokens for parsing.
- *
- * This file defines the structures and functions necessary for tokenizing
- * mathematical expressions into a sequence of tokens. These tokens are used
- * in parsing algorithms such as the Shunting Yard algorithm to evaluate or
- * transform expressions.
- *
- * Features:
- * - Defines the `Token` struct to represent individual tokens in an expression.
- * - Provides utility functions for determining operator precedence and associativity.
- * - Includes a tokenizer function to convert a string expression into a vector of tokens.
- *
- * Token Types:
- * - `NUMBER`: Represents numeric values.
- * - `OPERATOR`: Represents mathematical operators such as `+`, `-`, `*`, `/`, `^`.
- * - `LEFT_PAREN`: Represents the left parenthesis `(`.
- * - `RIGHT_PAREN`: Represents the right parenthesis `)`.
- * - `UNKNOWN`: Represents unrecognized or uninitialized tokens.
- *
- * Precedence Levels:
- * - `PREC_ADD_SUB`: Precedence for addition and subtraction operators (`+`, `-`).
- * - `PREC_MUL_DIV`: Precedence for multiplication and division operators (`*`, `/`).
- * - `PREC_POWER`: Precedence for the power operator (`^`).
- *
- * Usage:
- * - Use the `tokenizer` function to parse a mathematical expression into tokens.
- * - Use utility functions like `getPrecedence` and `isOperatorLeftAssociative` to
- *   assist in parsing and evaluating expressions.
- *
- * @author Michael Ellis
- * @date 2023
- */
 #pragma once
 
 #include <iostream>
 #include <vector>
 #include <string_view>
 
-const int PREC_ADD_SUB = 1;
-const int PREC_MUL_DIV = 2;
-const int PREC_POWER = 3;
+// Precedence levels for mathematical operators. Higher values indicate
+// higher precedence. These constants are used to determine the order of
+// operations in expressions.
+const int PREC_ADD_SUB = 1;  // Precedence for addition (+) and subtraction (-).
+const int PREC_MUL_DIV = 2;  // Precedence for multiplication (*) and division (/).
+const int PREC_POWER = 3;    // Precedence for exponentiation (^).
 
-// Enum to represent the type of a token
+// Represents the type of a token in a mathematical expression.
 enum class TokenType {
-    NUMBER,
-    OPERATOR,
-    LEFT_PAREN,
-    RIGHT_PAREN,
-    UNKNOWN     // For errors or uninitialized
+    NUMBER,        // Numeric values (e.g., "3.14", "42").
+    OPERATOR,      // Mathematical operators (e.g., '+', '-', '*', '/').
+    LEFT_PAREN,    // Left parenthesis '('.
+    RIGHT_PAREN,   // Right parenthesis ')'.
+    UNKNOWN        // Unrecognized or invalid tokens.
 };
 
-// Helper function to convert TokenType to its string representation
+// Converts a `TokenType` to its string representation (e.g., "NUMBER").
+// Useful for debugging.
 std::string tokenTypeToString(TokenType type);
 
-// Struct to represent a token
+// Represents a token in a mathematical expression, such as a number,
+// operator, or parenthesis. Includes metadata for operators like precedence
+// and associativity.
 struct Token {
-    std::string value;      // The string representation of the token (e.g., "3.14", "+")
-    TokenType type;
-    int precedence;
-    bool isLeftAssociative;;
+    std::string value;  // The string value of the token (e.g., "3.14", "+").
+    TokenType type;     // The type of the token.
+    int precedence;     // Operator precedence (0 for non-operators).
+    bool isLeftAssociative;  // True if the operator is left-associative.
 
-    // Constructor for numbers with multiple digits
+    // Constructs a token for a number or non-operator symbol.
     Token(std::string val_str, TokenType t)
         : value(std::move(val_str)), type(t), precedence(0), isLeftAssociative(true) {}
 
-    // Constructor for numbers with single digits, paraentheses, or 
-    // non-operator/numerica characters
+    // Constructs a token for a single character (e.g., a parenthesis).
     Token(char val_char, TokenType t)
         : value(1, val_char), type(t), precedence(0), isLeftAssociative(true) {}
 
-    // Constructor for operators
+    // Constructs a token for an operator with specified precedence and associativity.
     Token(char val_char, TokenType t, int prec, bool is_left_assoc)
         : value(1, val_char), type(t), precedence(prec), isLeftAssociative(is_left_assoc) {}
-
 };
 
-// Overload the << operator for Token
+// Outputs a human-readable representation of the token to the stream.
+// Example: "Token(value='+', type=OPERATOR, precedence=1, isLeftAssociative=true)"
 std::ostream& operator<<(std::ostream& os, const Token& token);
 
-// Function to determine operator precedence
+// Returns the precedence level for a given operator character (e.g., '+' or '*').
+// Returns 0 if the character is not a recognized operator.
 int getPrecedence(char op);
 
-// Function to check if a character is an operator
+// Returns true if the given character is a recognized mathematical operator
+// (e.g., '+', '-', '*', '/', '^').
 bool isOperatorChar(char c);
 
-// Function to determine if an operator character is left-associative
+// Determines if a binary operator is left-associative (e.g., '+' is left-associative).
+// Returns false for right-associative operators (e.g., '^') or unrecognized operators.
 bool isBinaryOperatorLeftAssociative(char op);
 
+// Tokenizes a mathematical expression string into a vector of tokens.
+// Example: "3 + 4 * (2 - 1)" -> [NUMBER(3), OPERATOR(+), NUMBER(4), OPERATOR(*), LEFT_PAREN, NUMBER(2), OPERATOR(-), NUMBER(1), RIGHT_PAREN]
 std::vector<Token> tokenizer(const std::string_view expression);

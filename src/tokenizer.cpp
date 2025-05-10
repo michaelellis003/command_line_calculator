@@ -1,36 +1,7 @@
-/**
- * @file tokenizer.cpp
- * @brief Implementation of a tokenizer for mathematical expressions.
- *
- * This file contains functions to tokenize a mathematical expression into
- * a sequence of tokens. The tokenizer supports operators, parentheses, 
- * and numeric values, including floating-point numbers. It also provides 
- * utility functions to determine operator precedence and associativity.
- *
- * Functions:
- * - getPrecedence(char op): Determines the precedence of a given operator.
- * - isOperatorChar(char c): Checks if a character is a valid operator.
- * - isBinaryOperatorLeftAssociative(char op): Determines if a binary operator 
- *   is left-associative.
- * - tokenizer(const std::string_view expression): Tokenizes a mathematical 
- *   expression into a vector of tokens.
- *
- * Supported Features:
- * - Operators: +, -, *, /, ^
- * - Parentheses: ( and )
- * - Numbers: Integers and floating-point values
- *
- * Notes:
- * - Exponentiation (^) is treated as a right-associative operator.
- * - Invalid characters in the expression are reported via standard error output.
- *
- * @author Michael Ellis
- * @date 2023
- */
 #include "tokenizer.h"
+#include <cctype> 
 
-
-// Helper function to convert TokenType to its string representation (Definition)
+// Converts a TokenType enum to its string representation.
 std::string tokenTypeToString(TokenType type) {
     switch (type) {
         case TokenType::NUMBER:       return "NUMBER";
@@ -42,7 +13,7 @@ std::string tokenTypeToString(TokenType type) {
     }
 }
 
-// Overload the << operator for Token (Definition)
+// Overloads the stream insertion operator for Token to provide a readable string representation.
 std::ostream& operator<<(std::ostream& os, const Token& token) {
     os << "Token { "
        << "Value: \"" << token.value << "\", "
@@ -53,43 +24,42 @@ std::ostream& operator<<(std::ostream& os, const Token& token) {
     return os;
 }
 
-// Function to determine operator precedence
+// Returns the precedence of an operator. Higher values indicate higher precedence.
 int getPrecedence(char op) {
-    if (op == '+' || op == '-') return PREC_ADD_SUB;
-    if (op == '*' || op == '/') return PREC_MUL_DIV;
-    if (op == '^') return PREC_POWER; // Exponentiation has higher precedence
-    return 0; // Not an operator or parenthesis
+    if (op == '+' || op == '-') return PREC_ADD_SUB; // Addition and subtraction
+    if (op == '*' || op == '/') return PREC_MUL_DIV; // Multiplication and division
+    if (op == '^') return PREC_POWER;               // Exponentiation
+    return 0; // Non-operator characters have no precedence.
 }
 
-// Function to check if a character is an operator
+// Checks if a character is a recognized operator.
 bool isOperatorChar(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '^';
 }
 
-// Function to determine if a BINARY operator character is left-associative
+// Determines if a binary operator is left-associative.
 bool isBinaryOperatorLeftAssociative(char op) {
     if (op == '+' || op == '-' || op == '*' || op == '/') {
-        return true;
+        return true; // Standard arithmetic operators are left-associative.
     }
-    if (op == '^') { // Binary Exponentiation is right-associative
-        return false;
+    if (op == '^') {
+        return false; // Exponentiation is right-associative.
     }
-    // By default, if we add new ops and forget, make them left.
-    // Or throw an error for unknown operator.
-    return true;
+    return true; // Default to left-associative for unknown operators.
 }
 
-// Function to tokenize the input expression
+// Tokenizes a mathematical expression into a vector of Token objects.
 std::vector<Token> tokenizer(const std::string_view expression) {
     std::vector<Token> tokens;
 
     for (size_t i = 0; i < expression.length(); ++i) {
-
         char char_token = expression[i];
 
-        if (isspace(char_token)) { // Skip whitespace
-            continue; // If no number is being built, just skip whitespace
+        if (isspace(char_token)) {
+            // Skip whitespace.
+            continue;
         } else if (isOperatorChar(char_token)) {
+            // Handle operators.
             tokens.push_back(
                 Token(
                     char_token, 
@@ -98,35 +68,32 @@ std::vector<Token> tokenizer(const std::string_view expression) {
                     isBinaryOperatorLeftAssociative(char_token)
                 )
             );
-
         } else if (char_token == '(') {
-
+            // Handle left parenthesis.
             tokens.push_back(Token(char_token, TokenType::LEFT_PAREN));
-
         } else if (char_token == ')') {
-
+            // Handle right parenthesis.
             tokens.push_back(Token(char_token, TokenType::RIGHT_PAREN));
-
         } else if (isdigit(char_token) || char_token == '.') {
-            // Start building a number token
+            // Handle numeric values, including floating-point numbers.
             std::string number_str;
 
             if (char_token == '.') {
-                // Handle case where a number starts with a decimal point
-                number_str += '0'; // Treat as "0."
+                // Prepend '0' if the number starts with a decimal point.
+                number_str += '0';
             }
 
-            while(i < expression.length() && 
-                  (isdigit(expression[i]) || expression[i] == '.')) {
+            // Accumulate digits and decimal points.
+            while (i < expression.length() && 
+                   (isdigit(expression[i]) || expression[i] == '.')) {
                 number_str += expression[i];
                 i++;
             }
-            i--; // Adjust index since the loop will increment it
+            i--; // Adjust index after overshooting in the loop.
 
             tokens.push_back(Token(number_str, TokenType::NUMBER));
-
         } else {
-            // Handle invalid characters
+            // Report invalid characters.
             std::cerr << "Invalid character in expression: " << char_token << std::endl;
         }
     }

@@ -47,6 +47,9 @@
         "memory": "cpp",
         "print": "cpp",
         "algorithm": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "stack": "cpp",
+        "deque": "cpp",
+        "__hash_table": "cpp"
     }
 }
