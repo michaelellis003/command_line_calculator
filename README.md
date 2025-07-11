@@ -76,7 +76,7 @@ Run the compiled executable with the `-e` or `--expression` flag followed by the
     Output: `1.5 * 4 - .5 = 5.5`
 
 - **Division by zero (Error Handling):**
-    ``
+    ```
     ./calculator -e "10 / (5 - 5)"
     ```
 
